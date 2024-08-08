@@ -13,9 +13,7 @@ Game::Game(const char* title, int width, int height)
     , false);
 
   m_surface = SDL_GetWindowSurface(m_window);
-
-  Renderer = SDL_CreateRenderer(m_window, -1, false);
-
+  // Renderer = SDL_CreateRenderer(m_window, -1, false);
   Running = true;
 }
 
@@ -49,9 +47,5 @@ void Game::update(double lag)
 
 void Game::draw()
 {
-  SDL_RenderClear(Renderer);
-
-  SDL_UpdateWindowSurface(m_window);
-
   std::cout << "Drawing game.\n";
 }
