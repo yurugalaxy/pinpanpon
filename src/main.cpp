@@ -15,6 +15,7 @@ SDL_Window* gWindow = SDL_CreateWindow(""
 SDL_Renderer* gRenderer = SDL_CreateRenderer(gWindow, -1, 0);
 SDL_Event m_windowEvent;
 FrameTime gTimer{60, 20};
+uint8_t randomCounter {};
 
 bool checkCollision( const SDL_Rect a, const SDL_Rect b)
 {
@@ -111,6 +112,7 @@ int main()
 
     while (gTimer.FrameAccumulator >= gTimer.TickRate)
     {
+      ++randomCounter;
       if (paddleLeft.y < 100)
         paddleLeft.y = 100;
       if (paddleLeft.y > 280)
@@ -124,10 +126,22 @@ int main()
       paddleRight.y += paddleRvelY * (gTimer.FrameAccumulator / gTimer.TickRate);
 
       if (checkCollision(paddleLeft, ball) || checkCollision(paddleRight, ball))
+        if (randomCounter < 150)
+          ballVelX += 5;
         ballVelX = -ballVelX;
       ball.x += ballVelX;
       if (checkCollision( outlineBottom, ball) || checkCollision(outlineTop, ball))
+      {
+        if (randomCounter < 20)
+          ballVelY += 5;
+        else if (randomCounter < 100)
+          ballVelY += 2;
+        else if (randomCounter < 200)
+          ballVelY -= 2;
+        else
+          ballVelY = 2;
         ballVelY = -ballVelY;
+      }
       ball.y += ballVelY;
 
       gTimer.FrameAccumulator -= gTimer.TickRate;
