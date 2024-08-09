@@ -3,8 +3,7 @@
 //TODO: remove debug output
 #include <iostream>
 
-#include "timings.hpp"
-#include "random.hpp"
+#include "utils.hpp"
 
 bool gRunning { true };
 
