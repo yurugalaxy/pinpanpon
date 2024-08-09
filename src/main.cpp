@@ -1,7 +1,10 @@
 #include <SDL2/SDL.h>
+
+//TODO: remove debug output
 #include <iostream>
 
 #include "timings.hpp"
+#include "random.hpp"
 
 bool gRunning { true };
 
@@ -17,7 +20,7 @@ SDL_Event m_windowEvent;
 FrameTime gTimer{60, 20};
 
 //TODO: seed the randomiser
-uint8_t randomCounter {};
+uint8_t randomCounter { Random::get8bitSeed() };
 
 bool checkCollision( const SDL_Rect a, const SDL_Rect b)
 {
@@ -110,11 +113,16 @@ int main()
           }
       }
     }
+
     gTimer.getTime();
 
     while (gTimer.FrameAccumulator >= gTimer.TickRate)
     {
-      ++randomCounter;
+      Random::rando8bit(randomCounter);
+
+      //TODO: remove debug output
+      std::cout << static_cast<int>(randomCounter) << '\n';
+
       if (paddleLeft.y < 100)
         paddleLeft.y = 100;
       if (paddleLeft.y > 280)
@@ -127,10 +135,12 @@ int main()
         paddleRight.y = 280;
       paddleRight.y += paddleRvelY * (gTimer.FrameAccumulator / gTimer.TickRate);
 
-      if (checkCollision(paddleLeft, ball) || checkCollision(paddleRight, ball))
+      if (checkCollision(paddleLeft, ball)
+          || checkCollision(paddleRight, ball))
         ballVelX = -ballVelX;
       ball.x += ballVelX;
-      if (checkCollision( outlineBottom, ball) || checkCollision(outlineTop, ball))
+      if (checkCollision( outlineBottom, ball)
+          || checkCollision(outlineTop, ball))
       {
         if (randomCounter < 20)
           ballVelY += 5;
@@ -146,19 +156,21 @@ int main()
 
       gTimer.FrameAccumulator -= gTimer.TickRate;
     }
-      SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 255);
-      SDL_RenderClear(gRenderer);
-      SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
-      SDL_RenderFillRect(gRenderer, &outlineLeft);
-      SDL_RenderFillRect(gRenderer, &outlineRight);
-      SDL_RenderFillRect(gRenderer, &outlineTop);
-      SDL_RenderFillRect(gRenderer, &outlineBottom);
-      SDL_RenderFillRect(gRenderer, &paddleLeft);
-      SDL_RenderFillRect(gRenderer, &paddleRight);
-      SDL_RenderFillRect(gRenderer, &ball);
-      SDL_RenderPresent(gRenderer);
+
+    SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 255);
+    SDL_RenderClear(gRenderer);
+    SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
+    SDL_RenderFillRect(gRenderer, &outlineLeft);
+    SDL_RenderFillRect(gRenderer, &outlineRight);
+    SDL_RenderFillRect(gRenderer, &outlineTop);
+    SDL_RenderFillRect(gRenderer, &outlineBottom);
+    SDL_RenderFillRect(gRenderer, &paddleLeft);
+    SDL_RenderFillRect(gRenderer, &paddleRight);
+    SDL_RenderFillRect(gRenderer, &ball);
+    SDL_RenderPresent(gRenderer);
   }
 
   SDL_DestroyWindow(gWindow);
   SDL_Quit();
+
 }
